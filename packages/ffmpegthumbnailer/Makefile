@@ -1,0 +1,52 @@
+#
+# Copyright (C) 2006-2011 OpenWrt.org
+#
+# This is free software, licensed under the GNU General Public License v2.
+# See /LICENSE for more information.
+#
+#
+
+include $(TOPDIR)/rules.mk
+
+PKG_NAME:=ffmpegthumbnailer
+PKG_VERSION:=2.2.0
+PKG_RELEASE:=1
+
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+PKG_SOURCE_URL:=https://github.com/dirkvdb/ffmpegthumbnailer/releases/download/$(PKG_VERSION)
+PKG_MD5SUM:=ed3754b3b8b9af93a93c490e17def0d0
+
+include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/cmake.mk
+
+define Package/libffmpegthumbnailer
+  SECTION:=libs
+  CATEGORY:=Libraries
+  TITLE:=library to create thumbnails
+  URL:=https://github.com/dirkvdb/ffmpegthumbnailer
+  DEPENDS:=+libffmpeg-full +libpng +libjpeg +libstdcpp
+  MAINTAINER:=Entware team, http://entware.net
+endef
+
+define Package/libffmpegthumbnailer/description
+  libffmpegthumbnailer is a library that can be used to create thumbnails for your video files
+endef
+
+CMAKE_OPTIONS = -DCMAKE_BUILD_TYPE=Release
+# -DENABLE_STATIC=On
+
+define Build/InstallDev
+	$(INSTALL_DIR) $(1)/usr/include
+	$(CP) $(PKG_INSTALL_DIR)/usr/include/libffmpegthumbnailer $(1)/usr/include/
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libffmpegthumbnailer*.so* $(1)/usr/lib/
+	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libffmpegthumbnailer.pc $(1)/usr/lib/pkgconfig/
+endef
+
+define Package/libffmpegthumbnailer/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libffmpegthumbnailer*.so* $(1)/usr/lib/
+endef
+
+$(eval $(call BuildPackage,libffmpegthumbnailer))
